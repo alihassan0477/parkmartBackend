@@ -13,6 +13,9 @@ const sellerSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+
+  password: String,
+
   phoneNo: {
     type: String,
     required: true,

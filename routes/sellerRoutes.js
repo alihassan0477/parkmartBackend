@@ -7,6 +7,7 @@ const router = express.Router();
 router.post('/api/create-seller', sellerController.createSeller); // Create a new seller
 router.get('/api/get-seller', sellerController.getAllSellers); // Get all sellers
 router.get('/api/get-seller/:id', sellerController.getSellerById); // Get a single seller by ID
+router.post('/api/loginSeller', sellerController.loginSeller); // Create a new seller
 
 module.exports = router;
 
