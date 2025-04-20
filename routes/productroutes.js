@@ -10,4 +10,11 @@ router.get(
   productController.getProductsByCategory
 );
 
+router.get(
+  '/get-products-by-sellerId/:id',
+  productController.getProductsBySellerId
+);
+
+router.delete('/api/product/:id', productController.deleteProduct);
+
 module.exports = router;

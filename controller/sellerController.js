@@ -130,6 +130,7 @@ exports.loginSeller = async (req, res) => {
       success: true,
       message: 'Login successful.',
       token, // Send the token to the client
+      sellerId: seller._id,
     });
   } catch (error) {
     // Handle errors

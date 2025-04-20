@@ -29,7 +29,7 @@ const createProduct = async (req, res) => {
     // Save the product to the database
     const savedProduct = await newProduct.save();
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: 'Product created successfully',
       product: savedProduct,
@@ -120,9 +120,60 @@ const getProductsByCategory = async (req, res) => {
   }
 };
 
+const getProductsBySellerId = async (req, res) => {
+  try {
+    const sellerId = req.params.id;
+    const products = await Product.find({ seller: sellerId }).populate([
+      'category',
+      'seller',
+    ]);
+
+    if (!products || products.length === 0) {
+      return res
+        .status(404)
+        .json({ message: 'No products found for this seller.' });
+    }
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const deleteProduct = async (req, res) => {
+  const { id } = req.params;
+  const { sellerId } = req.query;
+
+  if (!sellerId) {
+    return res.status(400).json({ message: 'sellerId is required' });
+  }
+
+  try {
+    const product = await Product.findOneAndDelete({
+      _id: id,
+      seller: sellerId,
+    });
+
+    console.log(product);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ message: 'Product not found or unauthorized' });
+    }
+
+    res.status(200).json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
   createProduct,
   getProduct,
   getAllproducts,
   getProductsByCategory,
+  deleteProduct,
+  getProductsBySellerId,
 };
