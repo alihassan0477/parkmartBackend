@@ -48,7 +48,7 @@ mongoose
   .then(() => {
     console.log('Connected to Database');
     server.listen(2000, () => {
-      console.log('Server is running on port 3000');
+      console.log('Server is running on port 2000');
     });
   })
   .catch((error) => {
