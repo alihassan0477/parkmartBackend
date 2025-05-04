@@ -1,5 +1,5 @@
 const Seller = require('../Model/sellerModel');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.createSeller = async (req, res) => {
