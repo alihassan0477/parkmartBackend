@@ -145,6 +145,8 @@ const deleteProduct = async (req, res) => {
   const { id } = req.params;
   const { sellerId } = req.query;
 
+  console.log(id, sellerId);
+
   if (!sellerId) {
     return res.status(400).json({ message: 'sellerId is required' });
   }
