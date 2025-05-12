@@ -76,3 +76,20 @@ exports.getRFQsBySellerId = async (req, res) => {
     return res.status(500).json({ message: 'Server error' }); // 500 Internal Server Error
   }
 };
+
+exports.getTotalRFQsBySeller = async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const rfqs = await RFQ.find({ seller_id: sellerId });
+    const total = await RFQ.countDocuments({ seller_id: sellerId });
+
+    res.status(200).json({
+      success: true,
+      total,
+      rfqs,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
