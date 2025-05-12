@@ -1,5 +1,6 @@
 const RFQ = require('../Model/RFQModel');
 const Product = require('../Model/productModel');
+const mongoose = require('mongoose');
 
 exports.createRFQ = async (req, res) => {
   try {
@@ -91,5 +92,76 @@ exports.getTotalRFQsBySeller = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+exports.updateStatus = async (req, res) => {
+  const { rfqId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedRFQ = await RFQ.findByIdAndUpdate(
+      rfqId,
+      { status: status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedRFQ) {
+      return res.status(404).json({ message: 'RFQ not found' });
+    }
+
+    res
+      .status(200)
+      .json({ message: 'Status updated successfully', data: updatedRFQ });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: 'Error updating status', error: error.message });
+  }
+};
+
+exports.getStatusCountsBySeller = async (req, res) => {
+  const { sellerId } = req.params; // sellerId comes from route param
+
+  console.log(sellerId);
+
+  try {
+    const result = await RFQ.aggregate([
+      {
+        $match: {
+          seller_id: new mongoose.Types.ObjectId(sellerId),
+        },
+      },
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Convert result array into object like { FreshLead: count, ... }
+    const counts = result.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+
+    // Ensure all possible statuses are present (even if 0)
+    const allStatuses = [
+      'FreshLead',
+      'OrderReceived',
+      'OrderClosed',
+      'LeadRejected',
+    ];
+    const finalCounts = {};
+    allStatuses.forEach((status) => {
+      finalCounts[status] = counts[status] || 0;
+    });
+
+    res.status(200).json({ sellerId, statusCounts: finalCounts });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error fetching status counts', error: error.message });
   }
 };

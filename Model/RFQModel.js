@@ -45,6 +45,12 @@ const RFQSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+
+  status: {
+    type: String,
+    enum: ['FreshLead', 'OrderReceived', 'OrderClosed', 'LeadRejected'],
+    default: 'FreshLead',
+  },
 });
 
 const RFQ = mongoose.model('RFQ', RFQSchema);
